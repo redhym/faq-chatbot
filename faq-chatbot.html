@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>FAQ Chatbot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f2f2f2;
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    .chatbox {
+      background: white;
+      border-radius: 10px;
+      padding: 15px;
+      max-height: 400px;
+      overflow-y: auto;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .message {
+      margin: 10px 0;
+    }
+
+    .user {
+      font-weight: bold;
+      color: #007bff;
+    }
+
+    .bot {
+      color: #333;
+    }
+
+    .input-area {
+      display: flex;
+      margin-top: 15px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      margin-left: 10px;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+
+    .quick-buttons {
+      margin-top: 15px;
+    }
+
+    .quick-buttons button {
+      background-color: #e0e0e0;
+      color: #333;
+      margin: 5px 5px 0 0;
+    }
+
+    @media (max-width: 600px) {
+      .input-area {
+        flex-direction: column;
+      }
+      .input-area input, .input-area button {
+        width: 100%;
+        margin: 5px 0;
+      }
+    }
+  </style>
+</head>
+<body onload="document.getElementById('userInput').focus();">
+  <h2>FAQ Chatbot</h2>
+
+  <div class="chatbox" id="chatBox">
+    <!-- Chat messages will appear here -->
+  </div>
+
+  <div class="input-area">
+    <input type="text" id="userInput" placeholder="Ask a question..." onkeypress="handleKey(event)" />
+    <button onclick="getAnswer()">Ask</button>
+  </div>
+
+  <div class="quick-buttons">
+    <button onclick="setQuickQuestion('What are your hours?')">What are your hours?</button>
+    <button onclick="setQuickQuestion('Where are you located?')">Where are you located?</button>
+    <button onclick="setQuickQuestion('Do you offer delivery?')">Do you offer delivery?</button>
+    <button onclick="setQuickQuestion('What is your refund policy?')">What is your refund policy?</button>
+  </div>
+
+  <script>
+    const faqs = [
+      {
+        keywords: ["hours", "open", "time"],
+        answer: "We're open from 9AM to 5PM, Monday to Friday."
+      },
+      {
+        keywords: ["location", "address", "where"],
+        answer: "Our office is at 123 Main Street, Sydney."
+      },
+      {
+        keywords: ["contact", "email", "phone"],
+        answer: "You can email us at contact@yourcompany.com or call (123) 456-7890."
+      },
+      {
+        keywords: ["delivery", "shipping", "deliver"],
+        answer: "Yes, we offer free delivery within city limits."
+      },
+      {
+        keywords: ["refund", "return", "money back"],
+        answer: "You can request a refund within 14 days of purchase."
+      }
+    ];
+
+    function getAnswer() {
+      const inputField = document.getElementById("userInput");
+      const input = inputField.value.toLowerCase().trim();
+      if (!input) return;
+
+      appendMessage("You", input, "user");
+
+      let response = "Sorry, I don't know the answer to that. Please contact support.";
+
+      for (let item of faqs) {
+        for (let keyword of item.keywords) {
+          if (input.includes(keyword)) {
+            response = item.answer;
+            break;
+          }
+        }
+        if (response !== "Sorry, I don't know the answer to that. Please contact support.") {
+          break;
+        }
+      }
+
+      appendMessage("Bot", response, "bot");
+      inputField.value = "";
+    }
+
+    function handleKey(event) {
+      if (event.key === "Enter") {
+        getAnswer();
+      }
+    }
+
+    function appendMessage(sender, message, className) {
+      const chatBox = document.getElementById("chatBox");
+      const messageElem = document.createElement("div");
+      messageElem.classList.add("message");
+      messageElem.innerHTML = `<span class="${className}">${sender}:</span> ${message}`;
+      chatBox.appendChild(messageElem);
+      chatBox.scrollTop = chatBox.scrollHeight; // auto-scroll to bottom
+    }
+
+    function setQuickQuestion(text) {
+      document.getElementById("userInput").value = text;
+      getAnswer();
+    }
+  </script>
+</body>
+</html>
